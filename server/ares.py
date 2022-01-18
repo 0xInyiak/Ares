@@ -8,9 +8,11 @@ import datetime
 import os
 import shutil
 import tempfile
+from OpenSSL import SSL
 
 from flask import Flask
 from flask_script import Manager
+from flask_script import Server
 
 from models import db
 from models import Agent
@@ -25,7 +27,9 @@ app.config.from_object(config['dev'])
 app.register_blueprint(webui)
 app.register_blueprint(api, url_prefix="/api")
 db.init_app(app)
+server = Server(ssl_crt='openssl/domain.crt', ssl_key='openssl/domain.key') ###Adding HTTPS
 manager = Manager(app)
+manager.add_command('runserver', server) ###Adding HTTPS
 
 
 @app.after_request
